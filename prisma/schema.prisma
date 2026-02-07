@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client"
+    output   = "../src/generated/prisma"
+engine="client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                    String         @id @default(cuid())
+  walletAddress         String         @unique // Primary lookup for Omikuji
+  ensName               String?
+  virtualBalance        BigInt         @default(0) // Stored in Wei/Units (6 decimals for USDC)
+
+  // Yellow Network Channel (persistent across sessions)
+  yellowChannelId       String?        // Channel ID (0x...)
+  yellowClearnodeAddr   String?        // Clearnode participant address
+  yellowBrokerAddr      String?        // Broker address from get_config
+  channelStatus         String         @default("unknown") // Channel status: unknown, open, closed
+  channelCreatedAt      DateTime?      // When channel was created
+  channelLastUsed       DateTime?      // Last time channel was used
+
+  sessions              GameSession[]
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+}
+
+model DealerStats {
+  id                String   @id @default(cuid())
+  totalProfits      BigInt   @default(0) // Accumulated from user losses
+  totalWithdrawn    BigInt   @default(0) // Total withdrawn by dealer
+  lastWithdrawal    DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model GameSession {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  betAmount       BigInt
+  multiplierHit   Float
+  payoutAmount    BigInt
+  outcome         String   // "WIN" or "LOSS"
+  nitroliteState  Json?    // Stores the signed state for session recovery
+  timestamp       DateTime @default(now())
+}

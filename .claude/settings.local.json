@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.yellow.org)",
+      "Bash(ls:*)",
+      "WebFetch(domain:hermes.pyth.network)",
+      "WebFetch(domain:docs.pyth.network)",
+      "Bash(curl:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}

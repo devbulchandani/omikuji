@@ -1,0 +1,42 @@
+{
+  "name": "omikuji",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@erc7824/nitrolite": "^0.5.3",
+    "@metamask/sdk": "^0.34.0",
+    "@neondatabase/serverless": "^1.0.2",
+    "@prisma/adapter-neon": "^7.3.0",
+    "@prisma/client": "^7.3.0",
+    "@tanstack/react-query": "^5.90.20",
+    "@types/ws": "^8.18.1",
+    "axios": "^1.13.4",
+    "next": "16.1.6",
+    "prisma": "^7.3.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "viem": "2.37.13",
+    "wagmi": "^3.4.1",
+    "ws": "^8.19.0",
+    "yellow-ts": "^0.0.10"
+  },
+  "overrides": {
+    "viem": "2.37.13"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

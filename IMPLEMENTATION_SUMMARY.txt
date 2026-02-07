@@ -1,0 +1,85 @@
+=== YELLOW NETWORK CHANNEL REUSE IMPLEMENTATION ===
+
+## What Was Changed:
+
+1. **Prisma Schema** (prisma/schema.prisma)
+   - Added channel persistence fields to User model:
+     * yellowChannelId - Store channel ID for reuse
+     * yellowClearnodeAddr - Clearnode participant address
+     * channelCreatedAt - When channel was created
+     * channelLastUsed - Last time channel was used
+
+2. **New Files Created:**
+   - src/app/actions/channelPersistence.ts - Server actions for channel storage
+   - src/hooks/useChannelHelpers.ts - Helper functions for channel management
+
+3. **Modified Files:**
+   - src/hooks/useChannelLifecycle.ts - Updated imports (line 16)
+   - Created new createPaymentChannel function in /tmp/.../scratchpad/new-createPaymentChannel.ts
+
+## Next Steps:
+
+### 1. Run Prisma Migration:
+```bash
+cd /mnt/d/pixel-mania
+npx prisma migrate dev --name add_channel_persistence
+npx prisma generate
+```
+
+### 2. Replace createPaymentChannel Function:
+The new implementation is in:
+/tmp/claude-1000/-mnt-d-pixel-mania/5f718f4b-5cfc-4ae0-ada3-a8cf3f001815/scratchpad/new-createPaymentChannel.ts
+
+This needs to replace lines 116-459 in src/hooks/useChannelLifecycle.ts
+
+**Key changes in new function:**
+- Checks database for existing channel FIRST
+- If found and active, reuses it (NO MetaMask popup)
+- If not found, creates new channel and stores ID
+- Removed all "close and recreate" logic
+- Simpler flow: check → reuse OR create → store
+
+### 3. Update game/page.tsx:
+- Handle isExisting flag from createPaymentChannel response
+- Skip creating new app session if using existing channel
+
+## New Flow:
+
+**First Time User:**
+1. Connect wallet (MetaMask popup)
+2. Deposit USDC → Custody
+3. Create Yellow channel
+4. Resize to allocate spending allowance
+5. Store channel ID in database
+6. Create app session (off-chain)
+7. Play game (NO more popups)
+
+**Returning User:**
+1. Connect wallet (MetaMask popup)
+2. Check database for stored channel
+3. Verify channel still active
+4. Reuse existing channel (NO deposit, NO create)
+5. Authenticate with Yellow
+6. Create app session (off-chain)
+7. Play game (NO more popups)
+
+**During Gameplay:**
+- All moves via app sessions (off-chain)
+- NO MetaMask popups
+- Instant bet confirmations
+
+## Benefits:
+
+✅ Channels persist across sessions
+✅ No need to close/recreate every time
+✅ Faster session setup for returning users
+✅ Only ONE MetaMask popup per session (just wallet connect)
+✅ Follows proper Yellow Network resize flow
+✅ Channel IDs stored in database for reliability
+
+## Testing:
+
+1. First time: Should see full flow with deposit
+2. Second time: Should skip deposit and reuse channel
+3. Game moves: Should work without any popups
+4. Check database: Should see yellowChannelId stored for user
