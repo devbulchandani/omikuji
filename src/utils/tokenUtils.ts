@@ -8,6 +8,8 @@ export function parseUSD(amount: string): bigint {
 }
 
 /** Format a raw USD bigint (6 decimals) into a human-readable string. */
-export function formatUSD(amount: bigint): string {
+export function formatUSD(amount?: bigint | null): string {
+  if (amount == null) return '0';
   return formatUnits(amount, USD_DECIMALS);
 }
+
